@@ -7,18 +7,18 @@ const isLoggedIn = async (req, res, next) => {
     const user = req.headers;
     // Check for username and password
     if (!user.username || !user.password) {
-        return res.status(500).json({message: "Please log in :)"})
-    }
+        return res.status(500).json({message: "Please log in :)"});
+    };
     // Select user matching header data
     const selectUser = await userDb('users').where({ username: user.username }).first();
     // Check for problems
     if (!selectUser) {
-        return res.status(500).json({message: "Could not find new user"})
+        return res.status(500).json({message: "Could not find matching user"});
     };
     // Check if password of selected user matches header password
     if (!bcrypt.compareSync(user.password, selectUser.password)) {
-        return res.status(500).json({message: "Incorrect password"})
-    }
+        return res.status(500).json({message: "Incorrect password"});
+    };
     // If logged in, continue
     next();
 }
@@ -26,6 +26,7 @@ const isLoggedIn = async (req, res, next) => {
 router.get('/users', isLoggedIn, async (req, res) => {
 
     try {
+        // Select and return all users in database
         const users = await userDb('users');
         return res.json(users);
     }
@@ -40,7 +41,7 @@ router.post('/register', async (req, res) => {
     try{
         // Check for username and password
         if (!user.username || !user.password) {
-            return res.status(500).json({message: "missing username or password"})
+            return res.status(500).json({message: "missing username or password"});
         }
         // Hash password
         user.password = bcrypt.hashSync(user.password, 10);
@@ -48,19 +49,19 @@ router.post('/register', async (req, res) => {
         const addUser = await userDb('users').insert(user);
         // Check for problems
         if (!addUser) {
-            return res.status(500).json({message: "Could not add user"})
+            return res.status(500).json({message: "Could not add user"});
         };
         // Select newly added user and return it
         const selectUser = await userDb('users').where({id: addUser[0]}).first();
         // Check for problems
         if (!selectUser) {
-            return res.status(500).json({message: "Could not find new user"})
+            return res.status(500).json({message: "Could not find new user"});
         };
         // Return new user
         return res.status(200).json(selectUser);
     }
     catch (err) {
-        return res.status(500).json({err: err.message})
+        return res.status(500).json({err: err.message});
     }
 });
 
@@ -70,23 +71,23 @@ router.post('/login', async (req, res) => {
     try{
         // Check for username and password
         if (!user.username || !user.password) {
-            return res.status(500).json({message: "missing username or password"})
+            return res.status(500).json({message: "missing username or password"});
         }
         // Select username matching the post data
         const selectUser = await userDb('users').where({ username: user.username }).first();
         // Check for problems
         if (!selectUser) {
-            return res.status(500).json({message: "Could not find new user"})
+            return res.status(500).json({message: "Could not find new user"});
         };
         // Compare saved user hash and post data user hash
         if (!bcrypt.compareSync(user.password, selectUser.password)) {
-            return res.status(500).json({message: "Incorrect password"})
+            return res.status(500).json({message: "Incorrect password"});
         }
         // Logged in!
-        return res.status(500).json({message: `Logged in as ${selectUser.username}!`})
+        return res.status(500).json({message: `Logged in as ${selectUser.username}!`});
     }
     catch (err) {
-        return res.status(500).json({err: err.message})
+        return res.status(500).json({err: err.message});
     }
 });
 
