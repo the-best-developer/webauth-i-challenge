@@ -17,7 +17,7 @@ const isLoggedIn = async (req, res, next) => {
     };
     // Check if password of selected user matches header password
     if (!bcrypt.compareSync(user.password, selectUser.password)) {
-        return res.status(500).json({message: "Incorrect password"});
+        return res.status(500).json({message: "You shall not pass!"});
     };
     // If logged in, continue
     next();
@@ -81,7 +81,7 @@ router.post('/login', async (req, res) => {
         };
         // Compare saved user hash and post data user hash
         if (!bcrypt.compareSync(user.password, selectUser.password)) {
-            return res.status(500).json({message: "Incorrect password"});
+            return res.status(500).json({message: "You shall not pass!"});
         }
         // Logged in!
         return res.status(500).json({message: `Logged in as ${selectUser.username}!`});
