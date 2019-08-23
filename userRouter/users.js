@@ -76,7 +76,7 @@ router.post('/login', async (req, res) => {
         // Logged in!
         
         req.session.user = user.username;
-        return res.status(500).json({message: `Logged in as ${selectUser.username}!`});
+        return res.status(200).json({message: `Logged in as ${selectUser.username}!`});
     }
     catch (err) {
         return res.status(500).json({err: err.message});
@@ -87,7 +87,7 @@ router.get('/logout', isLoggedIn, async (req, res) => {
 
     if (req.session && req.session.user) {
         const thisUser = req.session.user;
-        
+
         req.session.destroy();
         return res.status(200).json({message: `Successfully logged out as ${thisUser}!`});
     }
